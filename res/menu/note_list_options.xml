@@ -17,6 +17,14 @@
 
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 多选模式退出入口：部分机型 ActionMode 显示在底部，此项用于显式退出多选。 -->
+    <item
+        android:id="@+id/action_mode_cancel"
+        android:title="@android:string/cancel"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:showAsAction="always|withText" />
+
     <item
         android:id="@+id/move"
         android:title="@string/menu_move"

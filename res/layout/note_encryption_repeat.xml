@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    便签访问密码：用于“设置密码”对话框的密码 + 二次确认输入布局。
+    由 NoteEditActivity.showSetPasswordDialog() inflate。
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/et_password"
+        android:text="@string/password_input_hint" />
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:maxWidth="488dp"
+        android:minHeight="48dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:hint="@string/password_input_hint"
+        android:textColor="@android:color/primary_text_light"
+        android:textColorHint="@android:color/secondary_text_light"
+        android:inputType="textPassword"
+        android:singleLine="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:labelFor="@id/et_password_repeat"
+        android:text="@string/password_repeat_hint" />
+
+    <EditText
+        android:id="@+id/et_password_repeat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:maxWidth="488dp"
+        android:minHeight="48dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:hint="@string/password_repeat_hint"
+        android:textColor="@android:color/primary_text_light"
+        android:textColorHint="@android:color/secondary_text_light"
+        android:inputType="textPassword"
+        android:singleLine="true" />
+</LinearLayout>

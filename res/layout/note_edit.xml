@@ -16,6 +16,7 @@
 -->
 
 <FrameLayout
+    android:id="@+id/note_edit_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/list_background"
@@ -29,15 +30,18 @@
         <LinearLayout
             android:id="@+id/note_title"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_modified_date"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_gravity="left|center_vertical"
+                android:layout_gravity="start|center_vertical"
                 android:layout_marginRight="8dip"
+                android:layout_marginEnd="8dip"
                 android:textAppearance="@style/TextAppearanceSecondaryItem" />
 
             <ImageView
@@ -45,6 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:contentDescription="@string/note_reminder_set"
                 android:background="@drawable/title_alert" />
 
             <TextView
@@ -54,13 +59,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="2dip"
                 android:layout_marginRight="8dip"
+                android:layout_marginStart="2dip"
+                android:layout_marginEnd="8dip"
                 android:textAppearance="@style/TextAppearanceSecondaryItem" />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/bg_btn_set_color" />
         </LinearLayout>
 
         <LinearLayout
@@ -72,6 +73,7 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="7dip"
+                android:contentDescription="@null"
                 android:background="@drawable/bg_color_btn_mask" />
 
             <ScrollView
@@ -80,22 +82,26 @@
                 android:layout_weight="1"
                 android:scrollbars="none"
                 android:overScrollMode="never"
-                android:layout_gravity="left|top"
+                android:layout_gravity="start|top"
                 android:fadingEdgeLength="0dip">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <net.micode.notes.ui.NoteEditText
                         android:id="@+id/note_edit_view"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="left|top"
+                        android:layout_gravity="center_horizontal"
+                        android:maxWidth="488dip"
+                        android:gravity="start|top"
                         android:background="@null"
                         android:autoLink="all"
                         android:linksClickable="false"
                         android:minLines="12"
+                        android:hint="@string/note_edit_hint"
                         android:textAppearance="@style/TextAppearancePrimaryItem"
                         android:lineSpacingMultiplier="1.2" />
 
@@ -105,6 +111,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_marginLeft="-10dip"
+                        android:layout_marginStart="-10dip"
                         android:visibility="gone" />
                 </LinearLayout>
             </ScrollView>
@@ -112,16 +119,36 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="7dip"
+                android:contentDescription="@null"
                 android:background="@drawable/bg_color_btn_mask" />
         </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/btn_set_bg_color"
-        android:layout_height="43dip"
+    <!-- 右上角按钮区：保证“⋮菜单”和“背景色”两个按钮都可见且不互相遮挡 -->
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:background="@drawable/bg_color_btn_mask"
-        android:layout_gravity="top|right" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:orientation="horizontal">
+
+        <!-- 编辑页菜单入口（⋮）：点击弹出功能菜单（设置/解除访问密码等） -->
+        <ImageButton
+            android:id="@+id/btn_more_menu"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:background="@drawable/bg_color_btn_mask"
+            android:contentDescription="@string/more_options"
+            android:padding="6dip"
+            android:src="@android:drawable/ic_menu_more" />
+
+        <!-- 背景色按钮：打开背景色选择面板 -->
+        <ImageView
+            android:id="@+id/btn_set_bg_color"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:contentDescription="@string/set_background_color"
+            android:background="@drawable/bg_btn_set_color" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/note_bg_color_selector"
@@ -130,7 +157,9 @@
         android:background="@drawable/note_edit_color_selector_panel"
         android:layout_marginTop="30dip"
         android:layout_marginRight="8dip"
-        android:layout_gravity="top|right"
+        android:layout_marginEnd="8dip"
+        android:layout_gravity="top|end"
+        android:orientation="horizontal"
         android:visibility="gone">
 
         <FrameLayout
@@ -141,16 +170,19 @@
             <ImageView
                 android:id="@+id/iv_bg_yellow"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="@string/bg_color_yellow" />
 
             <ImageView
                 android:id="@+id/iv_bg_yellow_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:layout_marginRight="5dip"
+                android:layout_marginEnd="5dip"
                 android:focusable="false"
                 android:visibility="gone"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -162,16 +194,19 @@
             <ImageView
                 android:id="@+id/iv_bg_blue"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="@string/bg_color_blue" />
 
             <ImageView
                 android:id="@+id/iv_bg_blue_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
                 android:layout_marginRight="3dip"
+                android:layout_marginEnd="3dip"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -183,16 +218,19 @@
             <ImageView
                 android:id="@+id/iv_bg_white"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="@string/bg_color_white" />
 
             <ImageView
                 android:id="@+id/iv_bg_white_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
                 android:layout_marginRight="2dip"
+                android:layout_marginEnd="2dip"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -204,15 +242,17 @@
             <ImageView
                 android:id="@+id/iv_bg_green"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="@string/bg_color_green" />
 
             <ImageView
                 android:id="@+id/iv_bg_green_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -224,15 +264,17 @@
             <ImageView
                 android:id="@+id/iv_bg_red"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:contentDescription="@string/bg_color_red" />
 
             <ImageView
                 android:id="@+id/iv_bg_red_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
     </LinearLayout>
@@ -243,6 +285,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/font_size_selector_bg"
         android:layout_gravity="bottom"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
         android:visibility="gone">
 
         <FrameLayout
@@ -251,35 +295,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/font_small"
-                    android:layout_marginBottom="5dip" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_font_small"
-                    android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
-            </LinearLayout>
+                android:gravity="center"
+                android:drawableTop="@drawable/font_small"
+                android:drawablePadding="5dip"
+                android:text="@string/menu_font_small"
+                android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
 
             <ImageView
                 android:id="@+id/iv_small_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:layout_marginRight="6dip"
+                android:layout_marginEnd="6dip"
                 android:layout_marginBottom="-7dip"
                 android:focusable="false"
                 android:visibility="gone"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -289,35 +325,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/font_normal"
-                    android:layout_marginBottom="5dip" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_font_normal"
-                    android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
-            </LinearLayout>
+                android:gravity="center"
+                android:drawableTop="@drawable/font_normal"
+                android:drawablePadding="5dip"
+                android:text="@string/menu_font_normal"
+                android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
 
             <ImageView
                 android:id="@+id/iv_medium_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
                 android:layout_marginRight="6dip"
+                android:layout_marginEnd="6dip"
                 android:layout_marginBottom="-7dip"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -327,35 +355,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/font_large"
-                    android:layout_marginBottom="5dip" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_font_large"
-                    android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
-            </LinearLayout>
+                android:gravity="center"
+                android:drawableTop="@drawable/font_large"
+                android:drawablePadding="5dip"
+                android:text="@string/menu_font_large"
+                android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
 
             <ImageView
                 android:id="@+id/iv_large_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
                 android:layout_marginRight="6dip"
+                android:layout_marginEnd="6dip"
                 android:layout_marginBottom="-7dip"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
 
@@ -365,35 +385,27 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/font_super"
-                    android:layout_marginBottom="5dip" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_font_super"
-                    android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
-            </LinearLayout>
+                android:gravity="center"
+                android:drawableTop="@drawable/font_super"
+                android:drawablePadding="5dip"
+                android:text="@string/menu_font_super"
+                android:textAppearance="@style/TextAppearanceUnderMenuIcon" />
 
             <ImageView
                 android:id="@+id/iv_super_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
                 android:layout_marginRight="6dip"
+                android:layout_marginEnd="6dip"
                 android:layout_marginBottom="-7dip"
+                android:contentDescription="@null"
                 android:src="@drawable/selected" />
         </FrameLayout>
     </LinearLayout>

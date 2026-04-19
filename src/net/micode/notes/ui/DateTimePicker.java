@@ -246,6 +246,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：返回当前选择的时间戳（毫秒）。
      * Get the current date in millis
      *
      * @return the current date in millis
@@ -255,6 +256,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：用时间戳设置当前选择的日期时间。
      * Set the current date
      *
      * @param date The current date in millis
@@ -267,6 +269,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+        * 中文说明：用年月日时分设置当前选择的日期时间。
      * Set the current date
      *
      * @param year The current year
@@ -285,6 +288,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：获取当前选择的年份。
      * Get current year
      *
      * @return The current year
@@ -294,6 +298,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置当前选择的年份，并刷新日期滚轮。
      * Set current year
      *
      * @param year The current year
@@ -308,6 +313,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：获取当前选择的月份（0-11）。
      * Get current month in the year
      *
      * @return The current month in the year
@@ -317,6 +323,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置当前选择的月份（0-11），并刷新日期滚轮。
      * Set current month in the year
      *
      * @param month The month in the year
@@ -331,6 +338,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：获取当前选择的“日”（1-31）。
      * Get current day of the month
      *
      * @return The day of the month
@@ -340,6 +348,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置当前选择的“日”（1-31），并刷新日期滚轮。
      * Set current day of the month
      *
      * @param dayOfMonth The day of the month
@@ -354,6 +363,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：获取 24 小时制的小时（0-23）。
      * Get current hour in 24 hour mode, in the range (0~23)
      * @return The current hour in 24 hour mode
      */
@@ -376,6 +386,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置 24 小时制小时（0-23），并在 12 小时制下同步 AM/PM。
      * Set current hour in 24 hour mode, in the range (0~23)
      *
      * @param hourOfDay
@@ -404,6 +415,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：获取当前选择的分钟（0-59）。
      * Get currentMinute
      *
      * @return The Current Minute
@@ -413,6 +425,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置当前选择的分钟（0-59）。
      * Set current minute
      */
     public void setCurrentMinute(int minute) {
@@ -425,6 +438,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：查询当前是否为 24 小时制显示。
      * @return true if this is in 24 hour view else false.
      */
     public boolean is24HourView () {
@@ -432,6 +446,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：切换 24 小时制/AMPM 显示，并刷新滚轮范围与显示。
      * Set whether in 24 hour or AM/PM mode.
      *
      * @param is24HourView True for 24 hour mode. False for AM/PM mode.
@@ -486,6 +501,7 @@ public class DateTimePicker extends FrameLayout {
     }
 
     /**
+     * 中文说明：设置日期时间变化监听器。
      * Set the callback that indicates the 'Set' button has been pressed.
      * @param callback the callback, if null will do nothing
      */

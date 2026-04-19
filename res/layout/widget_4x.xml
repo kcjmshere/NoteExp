@@ -23,7 +23,8 @@
     <ImageView
         android:id="@+id/widget_bg_image"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/widget_text"
@@ -32,6 +33,8 @@
         android:paddingTop="40dip"
         android:paddingLeft="15dip"
         android:paddingRight="15dip"
+        android:paddingStart="15dip"
+        android:paddingEnd="15dip"
         android:textSize="14sp"
         android:textColor="#FF663300"
         android:maxLines="12"

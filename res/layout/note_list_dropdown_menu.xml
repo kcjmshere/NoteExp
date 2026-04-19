@@ -22,10 +22,21 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+     <!-- 多选模式“取消/返回”按钮：用于退出 ActionMode 回到初始列表界面 -->
+     <ImageButton
+          android:id="@+id/btn_action_mode_cancel"
+          android:layout_width="48dp"
+          android:layout_height="match_parent"
+          android:background="@null"
+          android:contentDescription="@android:string/cancel"
+          android:paddingLeft="12dp"
+          android:paddingRight="12dp"
+          android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
     <Button android:id="@+id/selection_menu"
             android:divider="?android:attr/listDividerAlertDialog"
             android:singleLine="true"
-            android:gravity="left|center_vertical"
+         android:gravity="start|center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             style="?android:attr/borderlessButtonStyle" />

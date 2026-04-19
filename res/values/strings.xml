@@ -67,6 +67,32 @@
     <string name="menu_send_to_desktop">Send to home</string>
     <string name="menu_alert">Remind me</string>
     <string name="menu_remove_remind">Delete reminder</string>
+
+     <string name="note_edit_hint">Type your note</string>
+
+     <string name="more_options">More options</string>
+     <string name="set_background_color">Set background color</string>
+     <string name="note_locked">Locked note</string>
+     <string name="note_reminder_set">Reminder set</string>
+     <string name="bg_color_yellow">Yellow background</string>
+     <string name="bg_color_blue">Blue background</string>
+     <string name="bg_color_white">White background</string>
+     <string name="bg_color_green">Green background</string>
+     <string name="bg_color_red">Red background</string>
+
+     <!-- Per-note access password -->
+     <string name="menu_set_password">Set access password</string>
+     <string name="menu_remove_password">Remove access password</string>
+     <string name="password_title_verify">Enter password</string>
+     <string name="password_title_set">Set password</string>
+     <string name="password_title_remove">Remove password</string>
+     <string name="password_input_hint">Password</string>
+     <string name="password_repeat_hint">Repeat password</string>
+     <string name="password_error_empty">Password cannot be empty</string>
+     <string name="password_error_mismatch">Passwords do not match</string>
+     <string name="password_error_incorrect">Incorrect password</string>
+     <string name="password_set_success">Password set</string>
+     <string name="password_removed_success">Password removed</string>
     <string name="menu_title_select_folder">Select folder</string>
     <string name="menu_move_parent_folder">Parent folder</string>
     <string name="info_note_enter_desktop">Note added to home</string>

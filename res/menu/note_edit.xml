@@ -26,6 +26,15 @@
         android:id="@+id/menu_delete"
         android:title="@string/menu_delete"/>
 
+    <!-- 便签访问密码：设置/解除密码（NoteEditActivity 动态控制显隐） -->
+    <item
+        android:id="@+id/menu_set_password"
+        android:title="@string/menu_set_password"/>
+
+    <item
+        android:id="@+id/menu_remove_password"
+        android:title="@string/menu_remove_password"/>
+
     <item
         android:id="@+id/menu_font_size"
         android:title="@string/menu_font_size"/>

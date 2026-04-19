@@ -64,6 +64,15 @@
     <string name="menu_send_to_desktop">發送到桌面</string>
     <string name="menu_alert">提醒我</string>
     <string name="menu_remove_remind">刪除提醒</string>
+    <string name="note_edit_hint">輸入便箋內容</string>
+    <string name="set_background_color">設定背景顏色</string>
+    <string name="note_locked">受保護便箋</string>
+    <string name="note_reminder_set">已設定提醒</string>
+    <string name="bg_color_yellow">黃色背景</string>
+    <string name="bg_color_blue">藍色背景</string>
+    <string name="bg_color_white">白色背景</string>
+    <string name="bg_color_green">綠色背景</string>
+    <string name="bg_color_red">紅色背景</string>
     <string name="menu_title_select_folder">選擇文件夾</string>
     <string name="menu_move_parent_folder">上一級文件夾</string>
     <string name="info_note_enter_desktop">已添加到桌面</string>

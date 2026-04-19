@@ -49,6 +49,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -173,7 +174,7 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     // 生命周期：在进程被杀后恢复笔记 id 并重新初始化状态。
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null && savedInstanceState.containsKey(Intent.EXTRA_UID)) {
+        if (savedInstanceState.containsKey(Intent.EXTRA_UID)) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.putExtra(Intent.EXTRA_UID, savedInstanceState.getLong(Intent.EXTRA_UID));
             if (!initActivityState(intent)) {
@@ -199,8 +200,16 @@ public class NoteEditActivity extends Activity implements OnClickListener,
              * Starting from the searched result
              */
             if (intent.hasExtra(SearchManager.EXTRA_DATA_KEY)) {
-                noteId = Long.parseLong(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-                mUserQuery = intent.getStringExtra(SearchManager.USER_QUERY);
+                String dataKey = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
+                if (!TextUtils.isEmpty(dataKey)) {
+                    try {
+                        noteId = Long.parseLong(dataKey);
+                    } catch (NumberFormatException e) {
+                        Log.w(TAG, "Bad EXTRA_DATA_KEY: " + dataKey);
+                    }
+                }
+                String query = intent.getStringExtra(SearchManager.USER_QUERY);
+                mUserQuery = (query != null) ? query : "";
             }
 
             if (!DataUtils.visibleInNoteDatabase(getContentResolver(), noteId, Notes.TYPE_NOTE)) {
@@ -272,7 +281,10 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     // 生命周期：刷新编辑界面内容与样式。
     protected void onResume() {
         super.onResume();
-        initNoteScreen();
+        resetMoreMenuButton();
+        if (mWorkingNote != null) {
+            initNoteScreen();
+        }
     }
 
     // 初始化编辑区：设置字号、模式（普通/清单）、背景与头部提示。
@@ -286,7 +298,13 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             mNoteEditor.setSelection(mNoteEditor.getText().length());
         }
         for (Integer id : sBgSelectorSelectionMap.keySet()) {
-            findViewById(sBgSelectorSelectionMap.get(id)).setVisibility(View.GONE);
+            Integer viewId = sBgSelectorSelectionMap.get(id);
+            if (viewId != null) {
+                View selection = findViewById(viewId);
+                if (selection != null) {
+                    selection.setVisibility(View.GONE);
+                }
+            }
         }
         mHeadViewPanel.setBackgroundResource(mWorkingNote.getTitleBgResId());
         mNoteEditorPanel.setBackgroundResource(mWorkingNote.getBgColorResId());
@@ -318,7 +336,7 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         } else {
             mNoteHeaderHolder.tvAlertDate.setVisibility(View.GONE);
             mNoteHeaderHolder.ivAlertIcon.setVisibility(View.GONE);
-        };
+        }
     }
 
     @Override
@@ -380,24 +398,33 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     private void initResources() {
         mHeadViewPanel = findViewById(R.id.note_title);
         mNoteHeaderHolder = new HeadViewHolder();
-        mNoteHeaderHolder.tvModified = (TextView) findViewById(R.id.tv_modified_date);
-        mNoteHeaderHolder.ivAlertIcon = (ImageView) findViewById(R.id.iv_alert_icon);
-        mNoteHeaderHolder.tvAlertDate = (TextView) findViewById(R.id.tv_alert_date);
-        mNoteHeaderHolder.ibSetBgColor = (ImageView) findViewById(R.id.btn_set_bg_color);
+        mNoteHeaderHolder.tvModified = findViewById(R.id.tv_modified_date);
+        mNoteHeaderHolder.ivAlertIcon = findViewById(R.id.iv_alert_icon);
+        mNoteHeaderHolder.tvAlertDate = findViewById(R.id.tv_alert_date);
+        mNoteHeaderHolder.ibSetBgColor = findViewById(R.id.btn_set_bg_color);
         mNoteHeaderHolder.ibSetBgColor.setOnClickListener(this);
-        mNoteEditor = (EditText) findViewById(R.id.note_edit_view);
+        View moreMenu = findViewById(R.id.btn_more_menu);
+        if (moreMenu != null) {
+            // 右上角“更多”按钮：点击后弹出 options menu。
+            moreMenu.setOnClickListener(this);
+        }
+        mNoteEditor = findViewById(R.id.note_edit_view);
         mNoteEditorPanel = findViewById(R.id.sv_note_edit);
         mNoteBgColorSelector = findViewById(R.id.note_bg_color_selector);
-        for (int id : sBgSelectorBtnsMap.keySet()) {
-            ImageView iv = (ImageView) findViewById(id);
-            iv.setOnClickListener(this);
+        for (Integer id : sBgSelectorBtnsMap.keySet()) {
+            ImageView iv = findViewById(id);
+            if (iv != null) {
+                iv.setOnClickListener(this);
+            }
         }
 
         mFontSizeSelector = findViewById(R.id.font_size_selector);
-        for (int id : sFontSizeBtnsMap.keySet()) {
+        for (Integer id : sFontSizeBtnsMap.keySet()) {
             View view = findViewById(id);
-            view.setOnClickListener(this);
-        };
+            if (view != null) {
+                view.setOnClickListener(this);
+            }
+        }
         mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mFontSizeId = mSharedPrefs.getInt(PREFERENCE_FONT_SIZE, ResourceParser.BG_DEFAULT_FONT_SIZE);
         /**
@@ -405,10 +432,10 @@ public class NoteEditActivity extends Activity implements OnClickListener,
          * The id may larger than the length of resources, in this case,
          * return the {@link ResourceParser#BG_DEFAULT_FONT_SIZE}
          */
-        if(mFontSizeId >= TextAppearanceResources.getResourcesSize()) {
+        if (mFontSizeId >= TextAppearanceResources.getResourcesSize()) {
             mFontSizeId = ResourceParser.BG_DEFAULT_FONT_SIZE;
         }
-        mEditTextList = (LinearLayout) findViewById(R.id.note_edit_list);
+        mEditTextList = findViewById(R.id.note_edit_list);
     }
 
     @Override
@@ -444,20 +471,45 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     // 点击回调：处理背景颜色选择、字号选择与打开选择面板。
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.btn_set_bg_color) {
+        if (id == R.id.btn_more_menu) {
+            resetMoreMenuButton();
+            showMoreMenuPopup(v);
+        } else if (id == R.id.btn_set_bg_color) {
             mNoteBgColorSelector.setVisibility(View.VISIBLE);
-            findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
-                    View.VISIBLE);
+            Integer viewId = sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId());
+            if (viewId != null) {
+                View selection = findViewById(viewId);
+                if (selection != null) {
+                    selection.setVisibility(View.VISIBLE);
+                }
+            }
         } else if (sBgSelectorBtnsMap.containsKey(id)) {
-            findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
-                    View.GONE);
+            Integer oldSelectionViewId = sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId());
+            if (oldSelectionViewId != null) {
+                View oldSelection = findViewById(oldSelectionViewId);
+                if (oldSelection != null) {
+                    oldSelection.setVisibility(View.GONE);
+                }
+            }
             mWorkingNote.setBgColorId(sBgSelectorBtnsMap.get(id));
             mNoteBgColorSelector.setVisibility(View.GONE);
         } else if (sFontSizeBtnsMap.containsKey(id)) {
-            findViewById(sFontSelectorSelectionMap.get(mFontSizeId)).setVisibility(View.GONE);
+            Integer oldFontSelectionViewId = sFontSelectorSelectionMap.get(mFontSizeId);
+            if (oldFontSelectionViewId != null) {
+                View oldFontSelection = findViewById(oldFontSelectionViewId);
+                if (oldFontSelection != null) {
+                    oldFontSelection.setVisibility(View.GONE);
+                }
+            }
             mFontSizeId = sFontSizeBtnsMap.get(id);
             mSharedPrefs.edit().putInt(PREFERENCE_FONT_SIZE, mFontSizeId).commit();
-            findViewById(sFontSelectorSelectionMap.get(mFontSizeId)).setVisibility(View.VISIBLE);
+            Integer newFontSelectionViewId = sFontSelectorSelectionMap.get(mFontSizeId);
+            if (newFontSelectionViewId != null) {
+                View newFontSelection = findViewById(newFontSelectionViewId);
+                if (newFontSelection != null) {
+                    newFontSelection.setVisibility(View.VISIBLE);
+                }
+            }
             if (mWorkingNote.getCheckListMode() == TextNote.MODE_CHECK_LIST) {
                 getWorkingText();
                 switchToListMode(mWorkingNote.getContent());
@@ -467,6 +519,31 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             }
             mFontSizeSelector.setVisibility(View.GONE);
         }
+    }
+
+    // 展示“更多”菜单：使用 PopupMenu 避免部分 ROM 的 options panel 状态异常。
+    private void showMoreMenuPopup(View anchor) {
+        if (isFinishing() || mWorkingNote == null) {
+            return;
+        }
+        PopupMenu popupMenu = new PopupMenu(this, anchor);
+        // 复用现有的菜单动态规则（标题/显隐等）。
+        onPrepareOptionsMenu(popupMenu.getMenu());
+        if (popupMenu.getMenu().size() == 0) {
+            resetMoreMenuButton();
+            return;
+        }
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+        popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            public void onDismiss(PopupMenu menu) {
+                resetMoreMenuButton();
+            }
+        });
+        popupMenu.show();
     }
 
     @Override
@@ -494,8 +571,13 @@ public class NoteEditActivity extends Activity implements OnClickListener,
 
     // 设置监听：背景颜色变化后刷新标题与编辑区背景。
     public void onBackgroundColorChanged() {
-        findViewById(sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId())).setVisibility(
-                View.VISIBLE);
+        Integer viewId = sBgSelectorSelectionMap.get(mWorkingNote.getBgColorId());
+        if (viewId != null) {
+            View selection = findViewById(viewId);
+            if (selection != null) {
+                selection.setVisibility(View.VISIBLE);
+            }
+        }
         mNoteEditorPanel.setBackgroundResource(mWorkingNote.getBgColorResId());
         mHeadViewPanel.setBackgroundResource(mWorkingNote.getTitleBgResId());
     }
@@ -529,6 +611,9 @@ public class NoteEditActivity extends Activity implements OnClickListener,
     @Override
     // 菜单点击：处理新建/删除/字号/清单模式/分享/桌面快捷方式/提醒等操作。
     public boolean onOptionsItemSelected(MenuItem item) {
+        // 菜单状态兜底：避免 cancel/dismiss 后菜单再次点击无响应。
+        closeOptionsMenu();
+        resetMoreMenuButton();
         // 迁移/构建适配改动说明（2026-03-25）：
         // - 将 switch(item.getItemId()) + case R.id.* 改为 if/else。
         // - 目的：避免在某些 AGP/构建配置下 R.id 不是编译期常量时触发“需要常量表达式”的编译错误。
@@ -552,7 +637,13 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             builder.show();
         } else if (id == R.id.menu_font_size) {
             mFontSizeSelector.setVisibility(View.VISIBLE);
-            findViewById(sFontSelectorSelectionMap.get(mFontSizeId)).setVisibility(View.VISIBLE);
+            Integer fontSelectionViewId = sFontSelectorSelectionMap.get(mFontSizeId);
+            if (fontSelectionViewId != null) {
+                View fontSelection = findViewById(fontSelectionViewId);
+                if (fontSelection != null) {
+                    fontSelection.setVisibility(View.VISIBLE);
+                }
+            }
         } else if (id == R.id.menu_list_mode) {
             mWorkingNote.setCheckListMode(mWorkingNote.getCheckListMode() == 0 ?
                     TextNote.MODE_CHECK_LIST : 0);
@@ -567,6 +658,29 @@ public class NoteEditActivity extends Activity implements OnClickListener,
             mWorkingNote.setAlertDate(0, false);
         }
         return true;
+    }
+
+    // 统一恢复“更多”按钮可点击状态：解决部分 ROM 在 cancel/dismiss 后按钮失效的问题。
+    private void resetMoreMenuButton() {
+        View moreMenu = findViewById(R.id.btn_more_menu);
+        if (moreMenu != null) {
+            moreMenu.setEnabled(true);
+            moreMenu.setClickable(true);
+        }
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        super.onOptionsMenuClosed(menu);
+        resetMoreMenuButton();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            resetMoreMenuButton();
+        }
     }
 
     // 设置提醒：弹出日期时间选择对话框并写入提醒时间。
@@ -646,7 +760,11 @@ public class NoteEditActivity extends Activity implements OnClickListener,
         if (mWorkingNote.getNoteId() > 0) {
             Intent intent = new Intent(this, AlarmReceiver.class);
             intent.setData(ContentUris.withAppendedId(Notes.CONTENT_NOTE_URI, mWorkingNote.getNoteId()));
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             AlarmManager alarmManager = ((AlarmManager) getSystemService(ALARM_SERVICE));
             showAlertHeader();
             if(!set) {
@@ -901,11 +1019,6 @@ public class NoteEditActivity extends Activity implements OnClickListener,
 
     // 弹 Toast（短时）。
     private void showToast(int resId) {
-        showToast(resId, Toast.LENGTH_SHORT);
-    }
-
-    // 弹 Toast（自定义时长）。
-    private void showToast(int resId, int duration) {
-        Toast.makeText(this, resId, duration).show();
+        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
     }
 }
